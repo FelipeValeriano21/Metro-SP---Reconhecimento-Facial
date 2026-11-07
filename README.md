@@ -114,7 +114,12 @@ Acesse `http://localhost:5000` no navegador.
 <!-- Adicione prints do projeto na pasta docs/ e referencie aqui -->
 <img width="1915" height="867" alt="image" src="https://github.com/user-attachments/assets/b37b988f-7517-42d2-b161-570ca4299e62" />
 
+<img width="1912" height="863" alt="image" src="https://github.com/user-attachments/assets/b457e410-56f7-44a0-95ab-666645473fe6" />
+
 <img width="1916" height="861" alt="image" src="https://github.com/user-attachments/assets/f1ec414b-665b-4489-8afa-bda69b4be178" />
+
+<img width="1917" height="871" alt="image" src="https://github.com/user-attachments/assets/07044ac7-bd3f-4c49-9bac-1a9f407aedf7" />
+
 
 
 

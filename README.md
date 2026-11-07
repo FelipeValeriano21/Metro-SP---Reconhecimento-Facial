@@ -112,8 +112,13 @@ Acesse `http://localhost:5000` no navegador.
 ## 📸 Capturas de tela
 
 <!-- Adicione prints do projeto na pasta docs/ e referencie aqui -->
-![Tela inicial](<img width="1915" height="867" alt="image" src="https://github.com/user-attachments/assets/8b4e2d1c-ed43-4a93-9ead-5f157433675e" />
-)
+<img width="1915" height="867" alt="image" src="https://github.com/user-attachments/assets/b37b988f-7517-42d2-b161-570ca4299e62" />
+
+<img width="1916" height="861" alt="image" src="https://github.com/user-attachments/assets/f1ec414b-665b-4489-8afa-bda69b4be178" />
+
+
+
+
 
 ## 🔮 Melhorias futuras
 

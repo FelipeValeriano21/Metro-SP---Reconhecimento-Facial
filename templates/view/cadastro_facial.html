@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrô Fácil | Cadastrar rosto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --azul: #0d47a1; --azul-claro: #2196f3; --cor-estado: #fff; }
+        body { background-color: #f1f5f9; font-family: Arial, sans-serif; min-height: 100vh; }
+        .logo { color: var(--azul); font-size: 26px; font-weight: bold; }
+        .logo span { color: var(--azul-claro); }
+        .painel { max-width: 560px; width: 100%; background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 5px 25px rgba(0,0,0,.08); }
+        .btn-primary { background-color: var(--azul); border-color: var(--azul); }
+        .btn-primary:hover, .btn-primary:focus { background-color: #083578; border-color: #083578; }
+        .btn-outline-primary { color: var(--azul); border-color: var(--azul); }
+        .btn-outline-primary:hover { background-color: var(--azul); border-color: var(--azul); }
+        .progress-bar { background-color: var(--azul-claro); }
+        .visor { position: relative; aspect-ratio: 4 / 3; background: #0b1b33; border-radius: 12px; overflow: hidden; }
+        .visor video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        .guia { position: absolute; top: 50%; left: 50%; width: 46%; aspect-ratio: 3 / 4; transform: translate(-50%, -50%);
+                border: 3px solid var(--cor-estado); border-radius: 50%; box-shadow: 0 0 0 100vmax rgba(8,30,70,.45); display: none; }
+        .visor.ativo .guia { display: block; }
+        .visor.ok { --cor-estado: #4ade80; }
+        .visor.falha { --cor-estado: #ff6b6b; }
+        .sem-camera { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #b9c8e0; }
+        .visor.ativo .sem-camera { display: none; }
+    </style>
+</head>
+<body>
+<div class="container min-vh-100 d-flex align-items-center justify-content-center py-4">
+    <div class="painel">
+        <div class="text-center mb-4">
+            <div class="logo">Metrô <span>Fácil</span></div>
+            <h1 class="h5 mt-3 mb-1">Cadastrar meu rosto</h1>
+            <p class="text-muted mb-0">Vamos tirar 10 fotos. Vire o rosto devagar para os lados durante a captura.</p>
+        </div>
+
+        <div id="visor" class="visor mb-3">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="guia"></div>
+            <div class="sem-camera">A câmera está desligada.</div>
+        </div>
+
+        <div class="progress mb-3" style="height:8px" aria-hidden="true">
+            <div id="barra" class="progress-bar" style="width:0%"></div>
+        </div>
+
+        <div id="estado" class="text-center mb-3" style="min-height:48px" role="status" aria-live="polite">
+            <div class="text-muted">Ligue a câmera e deixe o rosto dentro da moldura.</div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button id="btnCamera" class="btn btn-outline-primary py-2">Ligar câmera</button>
+            <button id="btnCapturar" class="btn btn-primary py-2" disabled>Cadastrar meu rosto</button>
+            <a id="btnTestar" href="/reconhecimento" class="btn btn-primary py-2 d-none">Testar reconhecimento</a>
+        </div>
+
+        <div class="text-center mt-3"><a href="/menu" class="small text-decoration-none">Voltar ao menu</a></div>
+    </div>
+</div>
+
+<script>
+    const TOTAL = 10, INTERVALO_MS = 600;
+    const visor = document.getElementById("visor"), video = document.getElementById("video");
+    const estado = document.getElementById("estado"), barra = document.getElementById("barra");
+    const btnCamera = document.getElementById("btnCamera"), btnCapturar = document.getElementById("btnCapturar");
+    const btnTestar = document.getElementById("btnTestar");
+    let stream = null;
+
+    const mostrar = (tipo, titulo, detalhe = "") => {
+        const c = { info: "text-muted", ok: "text-success", erro: "text-danger" }[tipo];
+        estado.innerHTML = `<div class="fw-semibold ${c}">${titulo}</div><div class="small text-muted">${detalhe}</div>`;
+    };
+    const esperar = ms => new Promise(r => setTimeout(r, ms));
+
+    async function ligar() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+            video.srcObject = stream;
+            visor.classList.add("ativo");
+            btnCapturar.disabled = false;
+            btnCamera.textContent = "Desligar câmera";
+            mostrar("info", "Posicione o rosto dentro da moldura.", "Use um local bem iluminado.");
+        } catch (e) {
+            mostrar("erro", e.name === "NotAllowedError" ? "Permissão da câmera negada." : "Não foi possível abrir a câmera.",
+                    "Libere o acesso à câmera nas configurações do navegador.");
+        }
+    }
+    function desligar() {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        stream = null; video.srcObject = null;
+        visor.classList.remove("ativo");
+        btnCapturar.disabled = true;
+        btnCamera.textContent = "Ligar câmera";
+    }
+    btnCamera.addEventListener("click", () => stream ? desligar() : ligar());
+
+    btnCapturar.addEventListener("click", async () => {
+        btnCapturar.disabled = true; btnCamera.disabled = true;
+        visor.classList.remove("ok", "falha");
+        barra.style.width = "0%";
+
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        const imagens = [];
+
+        for (let i = 1; i <= TOTAL; i++) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            imagens.push(canvas.toDataURL("image/jpeg", 0.85));
+            barra.style.width = (i / TOTAL * 100) + "%";
+            mostrar("info", `Foto ${i} de ${TOTAL}`, "Vire o rosto devagar para os lados.");
+            await esperar(INTERVALO_MS);
+        }
+
+        mostrar("info", "Salvando e treinando…", "Isso leva alguns segundos.");
+        try {
+            const resposta = await fetch("/cadastrar-rosto", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ imagens })
+            });
+            const texto = await resposta.text();
+            let resultado;
+            try { resultado = JSON.parse(texto); }
+            catch { throw new Error(`Erro do servidor (${resposta.status}). Veja o terminal do Flask.`); }
+            if (!resposta.ok) throw new Error(resultado.erro || "Não foi possível cadastrar.");
+
+            visor.classList.add("ok");
+            mostrar("ok", "Rosto cadastrado.", resultado.mensagem);
+            desligar();
+            btnCapturar.classList.add("d-none");
+            btnTestar.classList.remove("d-none");
+        } catch (erro) {
+            visor.classList.add("falha");
+            mostrar("erro", erro.message, "Ajuste a iluminação, fique de frente e tente de novo.");
+            btnCapturar.disabled = false;
+        }
+        btnCamera.disabled = false;
+    });
+
+    window.addEventListener("beforeunload", () => { if (stream) stream.getTracks().forEach(t => t.stop()); });
+</script>
+</body>
+</html>

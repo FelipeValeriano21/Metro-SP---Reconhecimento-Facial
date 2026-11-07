@@ -112,7 +112,8 @@ Acesse `http://localhost:5000` no navegador.
 ## 📸 Capturas de tela
 
 <!-- Adicione prints do projeto na pasta docs/ e referencie aqui -->
-![Tela inicial](docs/tela-inicial.png)
+![Tela inicial](<img width="1915" height="867" alt="image" src="https://github.com/user-attachments/assets/8b4e2d1c-ed43-4a93-9ead-5f157433675e" />
+)
 
 ## 🔮 Melhorias futuras
 
@@ -126,5 +127,5 @@ Acesse `http://localhost:5000` no navegador.
 **Felipe Valeriano**
 Ciência da Computação, Universidade Cruzeiro do Sul
 
-[GitHub](https://github.com/SEU-USUARIO) · [LinkedIn](https://linkedin.com/in/SEU-PERFIL)
+[GitHub](https://github.com/FelipeValeriano21) · [LinkedIn](https://linkedin.com/in/FelipeValeriano)
 

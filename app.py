@@ -74,7 +74,7 @@ def cadastro():
         cursor.execute("""
             INSERT INTO carteiras (usuario_id, saldo)
             VALUES (%s, %s)
-        """, (usuario_id, 0.00))
+        """, (usuario_id, 100.00))
 
         conexao.commit()
 

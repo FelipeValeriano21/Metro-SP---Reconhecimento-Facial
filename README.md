@@ -4,7 +4,7 @@ Sistema de acesso ao metrô com **reconhecimento facial** e **carteira digital**
 
 > Projeto acadêmico desenvolvido por Felipe Valeriano, no curso de Ciência da Computação (3º semestre) da Universidade Cruzeiro do Sul.
 
-## 📋 Sobre o projeto
+## 📋 Sobre o projeto metro sp
 
 O Metrô Fácil simula o fluxo completo de uma passagem de metrô:
 

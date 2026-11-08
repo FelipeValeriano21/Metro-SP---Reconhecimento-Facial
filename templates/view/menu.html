@@ -1,0 +1,333 @@
+{% macro item(m) %}
+{% set saida = m.valor < 0 %}
+<div class="d-flex align-items-center justify-content-between">
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="transaction-icon">
+            {% if saida %}<i class="bi bi-train-front"></i>
+            {% else %}<i class="bi bi-plus-circle"></i>{% endif %}
+        </div>
+
+        <div>
+            <strong>{{ 'Viagem de metrô' if saida else 'Crédito adicionado' }}</strong>
+            <p class="text-muted small mb-0">{{ m.data_hora.strftime('%d/%m/%Y %H:%M') }}</p>
+        </div>
+    </div>
+
+    {% if saida %}
+        <strong class="text-danger">- R$ {{ '%.2f'|format(m.valor|abs)|replace('.', ',') }}</strong>
+    {% else %}
+        <strong class="text-success">+ R$ {{ '%.2f'|format(m.valor)|replace('.', ',') }}</strong>
+    {% endif %}
+
+</div>
+{% endmacro %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrô Fácil | Minha Carteira</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: #0d47a1;
+        }
+
+        .navbar-brand {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .wallet-card {
+            background: linear-gradient(135deg, #0d47a1, #1976d2);
+            color: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 6px 18px rgba(13, 71, 161, 0.2);
+        }
+
+        .wallet-balance {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .status {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .option-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 22px;
+            height: 100%;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+            transition: 0.2s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .option-icon {
+            font-size: 28px;
+            color: #0d47a1;
+        }
+
+        .btn-metro {
+            background: white;
+            color: #0d47a1;
+            font-weight: bold;
+            border-radius: 9px;
+            padding: 12px 20px;
+        }
+
+        .btn-metro:hover {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .history-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            background: #e3f2fd;
+            color: #0d47a1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="/menu">
+            <i class="bi bi-train-front"></i> Metrô Fácil
+        </a>
+
+        <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#menuNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a  href="/sair" class="nav-link" >Sair</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container main-container">
+
+    <!-- BOAS-VINDAS -->
+    <div class="mb-4">
+        <h3>Olá, {{ nome }}!</h3>
+        <p class="text-muted">Confira sua carteira e acesse o metrô.</p>
+    </div>
+
+
+    <!-- CARTEIRA DIGITAL -->
+    <div class="wallet-card mb-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-wallet2"></i> Minha carteira</span>
+            <span class="status">
+                <i class="bi bi-check-circle-fill"></i> {{ carteira.status_carteira }}
+            </span>
+        </div>
+
+        <div class="mt-4">
+            <p class="mb-1">Saldo disponível</p>
+            <div class="wallet-balance">R$ {{ carteira.saldo }}</div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <small>Tarifa por acesso</small>
+                <h5 class="mb-0">R$ {{TARIFA}}</h5>
+            </div>
+
+            <a href="/reconhecimento" class="btn btn-metro">
+                
+                Acessar metrô       <i  mx-3 class="bi bi-person-square" ></i>
+            </a>
+        </div>
+
+    </div>
+
+
+    <!-- OPÇÕES -->
+    <h5 class="mb-3">Acesso rápido</h5>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="option-card">
+                <i class="bi bi-person-bounding-box option-icon"></i>
+                <h6 class="mt-3">Identificação facial</h6>
+                <p class="text-muted small">
+                    Inicie a identificação para validar seu acesso.
+                </p>
+                <a href="/cadastro-facial" class="btn btn-outline-primary btn-sm">
+                    Iniciar acesso
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="option-card">
+                <i class="bi bi-clock-history option-icon"></i>
+                <h6 class="mt-3">Histórico de Recargas</h6>
+                <p class="text-muted small">
+                    Consulte suas últimas movimentações.
+                </p>
+                <button type="button" class="btn btn-outline-primary btn-sm"
+                        data-bs-toggle="modal" data-bs-target="#modalHistorico">
+                    Ver histórico
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="option-card">
+                <i class="bi bi-person-circle option-icon"></i>
+                <h6 class="mt-3">Meu perfil</h6>
+                <p class="text-muted small">
+                    Visualize e edite seu perfil
+                </p>
+                <a href="/perfil" class="btn btn-outline-primary btn-sm">
+                    Veja mais
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- HISTÓRICO DE TRANSAÇÕES -->
+    <div class="history-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">Viagens Realizadas</h5>
+        </div>
+
+        {% for m in movimentacoes[:5] %}
+            {{ item(m) }}
+            {% if not loop.last %}<hr>{% endif %}
+        {% else %}
+            <p class="text-muted text-center mb-0">Você ainda não fez nenhuma viagem.</p>
+        {% endfor %}
+
+    </div>
+
+    </div>
+
+    <div class="modal fade" id="modalHistorico" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Histórico de Recargas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="historicoLoading" class="text-center text-muted">Carregando...</div>
+                <div id="historicoErro" class="alert alert-danger d-none"></div>
+
+                <table class="table table-sm d-none" id="historicoTabela">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historicoCorpo"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+    <footer class="text-center text-muted mt-4 mb-3">
+        <small>Metrô Fácil © 2026 | Projeto acadêmico Felipe Valeriano</small>
+    </footer>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.getElementById("modalHistorico").addEventListener("show.bs.modal", async () => {
+    const loading = document.getElementById("historicoLoading");
+    const erro = document.getElementById("historicoErro");
+    const tabela = document.getElementById("historicoTabela");
+    const corpo = document.getElementById("historicoCorpo");
+
+    loading.classList.remove("d-none");
+    erro.classList.add("d-none");
+    tabela.classList.add("d-none");
+    corpo.innerHTML = "";
+
+    try {
+        const resp = await fetch("/api/recargas");
+        if (!resp.ok) throw new Error("Falha ao buscar o histórico.");
+        const dados = await resp.json();
+
+        if (dados.length === 0) {
+            corpo.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Nenhuma movimentação encontrada.</td></tr>';
+        } else {
+            dados.forEach(m => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${m.data_hora}</td>
+                    <td class="text-success fw-bold">+ R$ ${m.valor.toFixed(2).replace(".", ",")}</td>
+                    <td>${m.status}</td>
+                `;
+                corpo.appendChild(tr);
+            });
+        }
+        tabela.classList.remove("d-none");
+    } catch (e) {
+        erro.textContent = e.message;
+        erro.classList.remove("d-none");
+    } finally {
+        loading.classList.add("d-none");
+    }
+});
+</script>
+
+</body>
+</html>

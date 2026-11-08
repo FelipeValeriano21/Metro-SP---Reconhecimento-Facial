@@ -161,7 +161,7 @@
 
             try {
                 // 4. Chamando a URL local correta do seu servidor Flask
-                const resposta = await fetch("http://127.0.0.1:5000/cadastrar", {
+                const resposta = await fetch("/cadastrar", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

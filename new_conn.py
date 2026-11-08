@@ -2,6 +2,8 @@ import os
 import mysql.connector
 from dotenv import load_dotenv
 
+import certifi
+
 load_dotenv()  # lê o .env localmente; no Render não faz nada
 
 # 1) Ler as variáveis (fora do connect)
@@ -13,7 +15,7 @@ DB_NAME = os.environ["DB_NAME"]
 
 # Caminho do certificado: no Render usa o do sistema,
 # no seu PC aponte para o .pem pela variável DB_SSL_CA
-DB_SSL_CA="C:/Users/felip/Downloads/isrgrootx1.pem"
+DB_SSL_CA = os.environ.get("DB_SSL_CA", certifi.where())
 
 
 def conectar():

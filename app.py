@@ -14,7 +14,7 @@ CORS(app, supports_credentials=True)
 
 TARIFA = Decimal("5.40")
 
-@app.route("/inicio")
+@app.route("/")
 def tela_login():
  return render_template("view/login.html") 
 

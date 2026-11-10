@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
+    senha VARCHAR(100) NOT NULL,
     biometria TEXT,
     status_usuario VARCHAR(20) DEFAULT 'ativo'
 );

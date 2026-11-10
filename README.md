@@ -52,7 +52,7 @@ Convenção dos valores na tabela `transacoes`:
 - **Recargas** são gravadas com valor **positivo**.
 - **Viagens** são gravadas com valor **negativo**.
 
-O script do banco está em [`metro_db.sql`](./metro_db.sql).
+O script do banco está em [`metro_db.sql`](./DB/metro_db.sql).
 
 ## 🚀 Como executar
 

@@ -65,7 +65,7 @@ O script do banco está em [`metro_db.sql`](./DB/metro_db.sql).
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git
+git clone https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git](https://github.com/FelipeValeriano21/Metro-SP---Reconhecimento-Facial
 cd NOME-DO-REPOSITORIO
 ```
 
